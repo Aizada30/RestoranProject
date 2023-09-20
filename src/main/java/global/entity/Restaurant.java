@@ -1,9 +1,7 @@
 package global.entity;
 
 import global.entity.enums.RestType;
-import global.validations.LengthOfWaiters;
 import jakarta.persistence.*;
-import jakarta.validation.Valid;
 import lombok.*;
 
 import java.util.List;
@@ -25,12 +23,13 @@ public class Restaurant  {
     private Long id;
     private String name;
     private String location;
+    @Enumerated(EnumType.STRING)
     private RestType restType;
-    private String numberOfEmployees;
-    private String service;
+    private int numberOfEmployees;
+    private int service;
     @OneToMany(mappedBy = "restaurant",cascade = {REFRESH,DETACH,PERSIST,MERGE})
-    @LengthOfWaiters @Valid
     private List<User> userList;
     @OneToMany(mappedBy = "restaurant",cascade = {REFRESH,DETACH,PERSIST,MERGE})
     private List<Menu>menultemList;
+
 }

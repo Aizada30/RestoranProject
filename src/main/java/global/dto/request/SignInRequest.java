@@ -7,7 +7,7 @@ import jakarta.validation.Valid;
  * Abdyrazakova Aizada
  */
 public record SignInRequest(
-        @EmailValid @Valid
+        @EmailValid
         String email,
         String password
 ) {

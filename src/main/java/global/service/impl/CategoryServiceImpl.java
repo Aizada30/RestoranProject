@@ -3,9 +3,14 @@ package global.service.impl;
 import global.dto.request.CategoryRequest;
 import global.dto.response.CategoryResponse;
 import global.dto.response.SimpleResponse;
+import global.entity.Category;
+import global.exceptionGlobal.NotFoundException;
 import global.repo.CategoryRepo;
+import global.repo.dao.CategoryJDBCTemplate;
 import global.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,32 +22,71 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryRepo categoryRepo ;
+    private final CategoryRepo categoryRepo;
+    private final CategoryJDBCTemplate categoryJDBCTemplate;
 
     @Override
     public SimpleResponse saveCategory(CategoryRequest categoryRequest) {
-        return null;
+        Category category = new Category();
+        category.setName(categoryRequest.name());
+        categoryRepo.save(category);
+        log.info(String.format("Category with id:%s successfully saved",category.getId()));
+        return new SimpleResponse(
+                HttpStatus.OK,
+                "Category successfully saved"
+        );
     }
 
     @Override
     public List<CategoryResponse> getAllCategory() {
-        return null;
+        log.info("All categories exit");
+        return categoryJDBCTemplate.getAllCategory();
     }
 
     @Override
     public CategoryResponse getByIdCategory(Long categoryId) {
-        return null;
+        if (!categoryRepo.existsById(categoryId)) {
+            log.error(String.format("Category with id %s not found",categoryId));
+            throw new NotFoundException(
+                    String.format("Category with id %s not found",categoryId));
+        }
+        log.info(String.format("Category with id %s successfully get",categoryId));
+        return categoryJDBCTemplate.getCategoryById(categoryId);
     }
 
     @Override
     public SimpleResponse deleteCategory(Long categoryId) {
-        return null;
+        if (!categoryRepo.existsById(categoryId)) {
+            log.error(String.format("Category with id %s not found",categoryId));
+            throw new NotFoundException(
+                    String.format("Category with id %s not found",categoryId));
+        }
+        categoryRepo.deleteById(categoryId);
+        log.info(String.format("Category with id:%s successfully deleted" , categoryId));
+        return new SimpleResponse(
+                HttpStatus.OK,
+                String.format("Category with id: %s successfully deleted",categoryId)
+        );
     }
 
     @Override
     public SimpleResponse updateCategory(Long categoryId, CategoryRequest categoryRequest) {
-        return null;
+       Category category =  categoryRepo.findById(categoryId).orElseThrow(
+                ()->{
+                    log.error(String.format("Category with id:%s not found",categoryId));
+                    throw new NotFoundException(
+                            (String.format("Category with id:%s not found",categoryId)));
+                }
+        );
+        category.setName(categoryRequest.name());
+        log.info(String.format("Category with id:%s successfully updated",categoryId));
+        categoryRepo.save(category);
+        return new SimpleResponse(
+                HttpStatus.OK,
+                String.format("Category with id:%s successfully updated",categoryId)
+        );
     }
 }

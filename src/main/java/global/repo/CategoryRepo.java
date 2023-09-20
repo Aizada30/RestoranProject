@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * Abdyrazakova Aizada
  */
 @Repository
-public interface CategoryRepo extends JpaRepository<Category,Long> {
+public interface CategoryRepo extends JpaRepository<Category, Long> {
 
 }

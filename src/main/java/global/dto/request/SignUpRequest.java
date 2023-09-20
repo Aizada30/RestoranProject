@@ -2,6 +2,7 @@ package global.dto.request;
 
 import global.entity.enums.Role;
 import global.validations.EmailValid;
+import global.validations.PasswordValid;
 import global.validations.PhoneNumberValid;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,6 +23,7 @@ public record SignUpRequest(
         LocalDate dateOfBirth,
         @EmailValid
         String email,
+        @PasswordValid
         String password,
         @PhoneNumberValid
         String phoneNumber,
