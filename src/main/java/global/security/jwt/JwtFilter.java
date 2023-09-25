@@ -2,7 +2,10 @@ package global.security.jwt;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import global.entity.User;
+import global.exceptionGlobal.NotFoundException;
 import global.repo.UserRepo;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,35 +31,46 @@ public class JwtFilter extends OncePerRequestFilter {
     private final UserRepo userRepository;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        String tokenHeader=request.getHeader("Authorization");
-        if(tokenHeader!=null && tokenHeader.startsWith("Bearer ")){
-            String token=tokenHeader.substring(7);
-            if(StringUtils.hasText(token)) {
+        final String tokenHeader = request.getHeader("Authorization");
+        if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
 
+            String token = tokenHeader.substring(7);
+            if (StringUtils.hasText(token)) {
                 try {
-                    String email = jwtService.validateToken(token);
+                    String username;
+                    try {
+                        username = jwtService.validateToken(token);
+                    } catch (MalformedJwtException e) {
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+                        return;
+                    } catch (ExpiredJwtException e) {
+                        response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+                        return;
+                    }
 
-                    User user = userRepository.getUserByEmail(email)
-                            .orElseThrow(
-                                    () -> new NoSuchElementException(
-                                            "Not exists user with email " + email));
+                    String finalUsername = username;
+                    User user = userRepository.getUserByEmail(username)
+                            .orElseThrow(() ->
+                                    new NotFoundException("User with email: %s not found".formatted(finalUsername)));
                     SecurityContextHolder.getContext()
-                            .setAuthentication(new UsernamePasswordAuthenticationToken(
-                                    user.getEmail(),
-                                    null,
-                                    user.getAuthorities()
-                            ));
-
-                }catch (JWTVerificationException e){
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,"Token error");
+                            .setAuthentication(
+                                    new UsernamePasswordAuthenticationToken(
+                                            user.getUsername(),
+                                            null,
+                                            user.getAuthorities()
+                                    ));
+                } catch (JWTVerificationException e) {
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                            "Invalid token");
                 }
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }
 

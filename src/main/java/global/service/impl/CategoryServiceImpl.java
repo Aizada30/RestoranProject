@@ -33,7 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         category.setName(categoryRequest.name());
         categoryRepo.save(category);
-        log.info(String.format("Category with id:%s successfully saved",category.getId()));
+        log.info(String.format("Category with id:%s successfully saved", category.getId()));
         return new SimpleResponse(
                 HttpStatus.OK,
                 "Category successfully saved"
@@ -49,44 +49,44 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse getByIdCategory(Long categoryId) {
         if (!categoryRepo.existsById(categoryId)) {
-            log.error(String.format("Category with id %s not found",categoryId));
+            log.error(String.format("Category with id %s not found", categoryId));
             throw new NotFoundException(
-                    String.format("Category with id %s not found",categoryId));
+                    String.format("Category with id %s not found", categoryId));
         }
-        log.info(String.format("Category with id %s successfully get",categoryId));
+        log.info(String.format("Category with id %s successfully get", categoryId));
         return categoryJDBCTemplate.getCategoryById(categoryId);
     }
 
     @Override
     public SimpleResponse deleteCategory(Long categoryId) {
         if (!categoryRepo.existsById(categoryId)) {
-            log.error(String.format("Category with id %s not found",categoryId));
+            log.error(String.format("Category with id %s not found", categoryId));
             throw new NotFoundException(
-                    String.format("Category with id %s not found",categoryId));
+                    String.format("Category with id %s not found", categoryId));
         }
         categoryRepo.deleteById(categoryId);
-        log.info(String.format("Category with id:%s successfully deleted" , categoryId));
+        log.info(String.format("Category with id:%s successfully deleted", categoryId));
         return new SimpleResponse(
                 HttpStatus.OK,
-                String.format("Category with id: %s successfully deleted",categoryId)
+                String.format("Category with id: %s successfully deleted", categoryId)
         );
     }
 
     @Override
     public SimpleResponse updateCategory(Long categoryId, CategoryRequest categoryRequest) {
-       Category category =  categoryRepo.findById(categoryId).orElseThrow(
-                ()->{
-                    log.error(String.format("Category with id:%s not found",categoryId));
-                    throw new NotFoundException(
-                            (String.format("Category with id:%s not found",categoryId)));
+        Category category = categoryRepo.findById(categoryId).orElseThrow(
+                () -> {
+                    log.error(String.format("Category with id:%s not found", categoryId));
+                    return new NotFoundException(
+                            (String.format("Category with id:%s not found", categoryId)));
                 }
         );
         category.setName(categoryRequest.name());
-        log.info(String.format("Category with id:%s successfully updated",categoryId));
+        log.info(String.format("Category with id:%s successfully updated", categoryId));
         categoryRepo.save(category);
         return new SimpleResponse(
                 HttpStatus.OK,
-                String.format("Category with id:%s successfully updated",categoryId)
+                String.format("Category with id:%s successfully updated", categoryId)
         );
     }
 }

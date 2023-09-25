@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 /**
@@ -26,8 +25,10 @@ public class Cheque {
     @GeneratedValue(strategy = SEQUENCE,generator = "cheque_gen")
     @SequenceGenerator(name = "cheque_gen",sequenceName = "cheque_seq",allocationSize = 1)
     private Long id;
-    private BigDecimal priceAverage;
     private LocalDate createdAt;
-    @ManyToMany(mappedBy = "chequeList",cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    private BigDecimal priceAvg;
+    @ManyToMany(cascade = {REFRESH,DETACH,PERSIST,MERGE})
     private List<Menu> menuList;
+    @ManyToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    private User user;
 }

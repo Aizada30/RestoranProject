@@ -36,7 +36,7 @@ public class Menu  {
     private Subcategory subcategory;
     @OneToOne (mappedBy = "menu",cascade = {REFRESH,DETACH,PERSIST,MERGE})
     private StopList stopList;
-    @ManyToMany(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToMany(mappedBy = "menuList",cascade = {REFRESH,DETACH,PERSIST,MERGE})
     private List<Cheque> chequeList;
 
 

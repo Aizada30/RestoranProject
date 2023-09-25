@@ -7,6 +7,7 @@ import global.validations.PhoneNumberValid;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.NonNull;
 
@@ -21,7 +22,8 @@ public record SignUpRequest(
         @NotNull
         String lastName,
         LocalDate dateOfBirth,
-        @EmailValid
+        @Email(message = "Email is invalid")
+//        @EmailValid(message = "")
         String email,
         @PasswordValid
         String password,

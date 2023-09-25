@@ -4,6 +4,7 @@ import global.entity.enums.RestType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static jakarta.persistence.CascadeType.*;
@@ -26,7 +27,7 @@ public class Restaurant  {
     @Enumerated(EnumType.STRING)
     private RestType restType;
     private int numberOfEmployees;
-    private int service;
+    private BigDecimal service;
     @OneToMany(mappedBy = "restaurant",cascade = {REFRESH,DETACH,PERSIST,MERGE})
     private List<User> userList;
     @OneToMany(mappedBy = "restaurant",cascade = {REFRESH,DETACH,PERSIST,MERGE})

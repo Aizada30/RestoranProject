@@ -26,8 +26,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Builder
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = SEQUENCE,generator = "user_gen")
-    @SequenceGenerator(name = "user_gen",sequenceName = "user_seq",allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE, generator = "user_gen")
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1)
     private Long id;
     private String firstName;
     private String lastName;
@@ -38,9 +38,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDate experience;
-    @ManyToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
-//    @JoinColumn(name = "restaurant_id")
+    @ManyToOne(cascade = {REFRESH, DETACH, PERSIST, MERGE})
     private Restaurant restaurant;
+    @OneToMany(mappedBy = "user", cascade = {REFRESH, DETACH, PERSIST, MERGE})
+    private List<Cheque> chequeList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -51,6 +52,7 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
+
     @Override
     public String getPassword() {
         return password;
