@@ -1,6 +1,7 @@
 package global.api;
 
 import global.dto.request.CategoryRequest;
+import global.dto.response.CategoryPaginationResponse;
 import global.dto.response.CategoryResponse;
 import global.dto.response.SimpleResponse;
 import global.service.CategoryService;
@@ -10,11 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * Abdyrazakova Aizada
- */
 @RequestMapping("/api/category")
 @RequiredArgsConstructor
 @RestController
@@ -31,8 +27,8 @@ public class CategoryApi {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAll")
-    public List<CategoryResponse> getAll(){
-        return categoryService.getAllCategory();
+    public CategoryPaginationResponse getAll(@RequestParam int page, @RequestParam int pageSize){
+        return categoryService.getAllCategory(page,pageSize);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

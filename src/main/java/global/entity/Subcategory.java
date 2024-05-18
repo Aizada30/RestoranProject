@@ -2,9 +2,7 @@ package global.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.List;
-
 import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -22,8 +20,8 @@ public class Subcategory{
     @SequenceGenerator(name = "subcategory_gen",sequenceName = "subcategory_seq",allocationSize = 1)
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "subcategory",cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @OneToMany(mappedBy = "subcategory",cascade = {DETACH,MERGE,REFRESH,PERSIST})
     private List<Menu> menuList;
-    @ManyToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToOne(cascade = {ALL})
     private Category category;
 }

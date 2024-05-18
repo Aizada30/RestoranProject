@@ -1,23 +1,15 @@
 package global.repo.dao;
 
-import global.dto.response.CategoryResponse;
-import global.dto.response.RestaurantResponse;
 import global.dto.response.UserResponse;
-import global.entity.enums.RestType;
+import global.dto.response.UserResponsePagination;
 import global.entity.enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Repository
 @RequiredArgsConstructor
 public class UserJDBCTemplate {
@@ -43,10 +35,11 @@ public class UserJDBCTemplate {
         Role role = (roleString != null) ? Role.valueOf(roleString) : null;
 
         return new UserResponse(id, firstName, lastName, dateOfBirth, email, phoneNumber, experience, role);
-};
+    };
 
 
-    public List<UserResponse> getAllUsers() {
+    public UserResponsePagination getAllUsers(int currentPage, int pageSize) {
+        int offset = (currentPage - 1) * pageSize;
         String sql = """
                 SELECT id,
                        first_name,
@@ -57,11 +50,39 @@ public class UserJDBCTemplate {
                        experience,
                        role
                 FROM users
+                LIMIT ? OFFSET ?
                 """;
-        return jdbcTemplate.query(sql, userRowMapper);
+        List<UserResponse> userResponseList = jdbcTemplate.query(sql, (resultSet, rowNumber) -> {
+            Role userRole = Role.valueOf(resultSet.getString("role"));
+            String dateOfBirthStr = resultSet.getString("date_of_birth");
+            LocalDate dateOfBirth = (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) ?
+                    LocalDate.parse(dateOfBirthStr) : null;
+
+            String experienceStr = resultSet.getString("experience");
+            LocalDate experienceDate = (experienceStr != null && !experienceStr.isEmpty()) ?
+                    LocalDate.parse(experienceStr) : null;
+            return new UserResponse(
+                    resultSet.getLong("id"),
+                    resultSet.getString("first_name"),
+                    resultSet.getString("last_name"),
+                    dateOfBirth,
+                    resultSet.getString("email"),
+                    resultSet.getString("phone_number"),
+                    experienceDate,
+                    userRole
+            );
+
+        }, currentPage, offset);
+
+        return UserResponsePagination
+                .builder()
+                .currentPage(currentPage)
+                .pageSize(pageSize)
+                .userResponseList(userResponseList)
+                .build();
     }
 
-    public UserResponse getUserById(Long userId){
+    public UserResponse getUserById(Long userId) {
         String sql = """
                 SELECT id,
                        first_name,
@@ -73,8 +94,6 @@ public class UserJDBCTemplate {
                        role
                 FROM users WHERE id = ?
                 """;
-        return jdbcTemplate.queryForObject(sql,userRowMapper,userId);
+        return jdbcTemplate.queryForObject(sql, userRowMapper, userId);
     }
-
-
 }

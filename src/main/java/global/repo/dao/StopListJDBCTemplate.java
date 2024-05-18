@@ -5,13 +5,9 @@ import global.dto.response.StopListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Repository
 @RequiredArgsConstructor
 public class StopListJDBCTemplate {
@@ -83,5 +79,4 @@ public class StopListJDBCTemplate {
                 .stopListResponses(stopListResponses)
                 .build();
     }
-
 }

@@ -2,17 +2,12 @@ package global.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-
 import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-/**
- * Abdyrazakova Aizada
- */
 @Getter
 @Setter
 @Entity
@@ -27,8 +22,8 @@ public class Cheque {
     private Long id;
     private LocalDate createdAt;
     private BigDecimal priceAvg;
-    @ManyToMany(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToMany(cascade = {MERGE,PERSIST,DETACH,REFRESH})
     private List<Menu> menuList;
-    @ManyToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToOne(cascade = {ALL})
     private User user;
 }

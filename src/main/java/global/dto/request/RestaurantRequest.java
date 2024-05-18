@@ -5,12 +5,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
-
 import java.math.BigDecimal;
 
-/**
- * Abdyrazakova Aizada
- */
 public record RestaurantRequest(
         @NotNull
         @Column(unique = true)
@@ -21,7 +17,5 @@ public record RestaurantRequest(
         @Enumerated(EnumType.STRING)
         RestType restType,
         BigDecimal service
-
 ) {
-
 }

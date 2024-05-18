@@ -2,25 +2,20 @@ package global.service;
 
 import global.dto.request.ChequeRequest;
 import global.dto.response.ChequeResponse;
+import global.dto.response.ChequeResponsePagination;
 import global.dto.response.SimpleResponse;
+import java.math.BigDecimal;
 
-import java.time.LocalDate;
-import java.util.List;
-
-/**
- * Abdyrazakova Aizada
- */
 public interface ChequeService {
-    List<ChequeResponse> findAll();
+    ChequeResponsePagination findAll(int currentPage, int pageSize);
 
     SimpleResponse save(ChequeRequest request);
 
     ChequeResponse findById(Long id);
 
-    SimpleResponse update(Long id,ChequeRequest request);
+    SimpleResponse update(Long id, ChequeRequest request);
+
     SimpleResponse delete(Long id);
-
-    SimpleResponse totalSum(Long id,LocalDate date);
-
-    SimpleResponse avg(LocalDate date);
+    BigDecimal waitersPrice(Long userId);
+    BigDecimal dayPrice(Long restaurantId);
 }

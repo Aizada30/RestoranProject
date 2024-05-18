@@ -2,9 +2,6 @@ package global.dto.response;
 
 import java.math.BigDecimal;
 
-/**
- * Abdyrazakova Aizada
- */
 public record WholeMenu(
         Long id,
         String categoryName,

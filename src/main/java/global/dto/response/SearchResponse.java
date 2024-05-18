@@ -1,12 +1,8 @@
 package global.dto.response;
 
 import lombok.Builder;
-
 import java.math.BigDecimal;
 
-/**
- * Abdyrazakova Aizada
- */
 @Builder
 public record SearchResponse(
         Long id,
@@ -17,6 +13,5 @@ public record SearchResponse(
         BigDecimal price,
         String description,
         boolean isVegetarian
-
 ) {
 }

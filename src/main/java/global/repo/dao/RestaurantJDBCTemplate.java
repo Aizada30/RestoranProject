@@ -6,12 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Repository
 @RequiredArgsConstructor
 public class RestaurantJDBCTemplate {
@@ -57,6 +53,4 @@ public class RestaurantJDBCTemplate {
                 """;
         return jdbcTemplate.queryForObject(sql, restaurantRowMapper,restaurantId);
     }
-
-
 }

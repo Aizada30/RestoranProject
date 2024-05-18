@@ -26,7 +26,7 @@ public class StopList{
     private Long id;
     private LocalDate date;
     private String reason;
-    @OneToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @OneToOne(cascade = {DETACH,MERGE,PERSIST,REFRESH})
     private Menu menu;
 
 }

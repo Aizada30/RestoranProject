@@ -9,12 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @RestController
 @RequestMapping("/api/stopList")
 @RequiredArgsConstructor
@@ -23,7 +19,7 @@ public class StopListApi {
 
     private final StopListService stopListService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('CHEF','ADMIN')")
     @PostMapping("/save")
     public SimpleResponse save(@RequestParam Long menuId, @RequestBody StopListRequest stopListRequest){
         return stopListService.saveStopList(menuId,stopListRequest);
@@ -35,14 +31,11 @@ public class StopListApi {
         return stopListService.getAllStopLists(restId);
     }
 
-
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getById")
     public StopListResponse getById(@RequestParam Long stopListId){
         return stopListService.getStopListById(stopListId);
     }
-
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/delete")
@@ -62,7 +55,4 @@ public class StopListApi {
     public StopListPagination getAll (@RequestParam int page, @RequestParam int pageSize){
         return stopListService.getAll(page, pageSize);
     }
-
-
-
 }

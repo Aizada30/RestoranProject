@@ -1,17 +1,12 @@
 package global.dto.response;
 
 import lombok.Builder;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Builder
-public record CategoryGroupByResponse(
+public record CategoryGroupByResponsePag(
         Long categoryId,
         String name,
         List<String> names
-
 ) {
 }

@@ -1,6 +1,7 @@
 package global.api;
 
 import global.dto.request.MenuRequest;
+import global.dto.response.MenuPaginationResponse;
 import global.dto.response.MenuResponse;
 import global.dto.response.SearchResponse;
 import global.dto.response.SimpleResponse;
@@ -9,12 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/manu")
@@ -22,7 +19,7 @@ import java.util.List;
 public class MenuApi {
     private final MenuService menuService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN','CHEF')")
     @PostMapping("/save")
     public SimpleResponse save(@RequestBody MenuRequest menuRequest, @RequestParam Long restaurantId, @RequestParam Long subCategoryId){
         return menuService.saveMenu(restaurantId,menuRequest,subCategoryId );
@@ -30,8 +27,8 @@ public class MenuApi {
 
      @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAll")
-    public List<MenuResponse> getAll(){
-        return menuService.getAll();
+    public MenuPaginationResponse getAll(int page,int pageSize){
+        return menuService.getAll(page, pageSize);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -69,6 +66,4 @@ public class MenuApi {
     public List<MenuResponse> filter(@RequestParam String word){
         return menuService.filter(word);
     }
-
-
 }

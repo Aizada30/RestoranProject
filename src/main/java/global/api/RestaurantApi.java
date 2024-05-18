@@ -9,12 +9,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/restaurant")
@@ -53,6 +49,4 @@ public class RestaurantApi {
     public SimpleResponse update(@RequestParam Long restaurantId,@RequestBody  RestaurantRequest request) {
         return restaurantService.updateRestaurant(restaurantId,request);
     }
-
-
 }

@@ -3,6 +3,7 @@ package global.api;
 import global.dto.request.SignUpRequest;
 import global.dto.response.SimpleResponse;
 import global.dto.response.UserResponse;
+import global.dto.response.UserResponsePagination;
 import global.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -10,11 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * Abdyrazakova Aizada
- */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
@@ -24,8 +20,8 @@ public class UserApi {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAll")
-    public List<UserResponse> getAllUser() {
-        return userService.getAll();
+    public UserResponsePagination getAllUser(@RequestParam int currentPage, @RequestParam int pageSize) {
+        return userService.getAll( currentPage,pageSize);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -48,8 +44,8 @@ public class UserApi {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/accept")
-    public SimpleResponse acceptOrRejectUser(@RequestParam Long userId, @RequestParam String word) {
-        return userService.acceptOrRejectUser(userId, word);
+    public SimpleResponse acceptOrRejectUser(@RequestParam Long userId, @RequestParam String word ,@RequestParam Long restaurantId) {
+        return userService.acceptOrRejectUser(userId, word, restaurantId );
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -58,4 +54,3 @@ public class UserApi {
         return userService.saveUser(restaurantId, signUpRequest);
     }
 }
-

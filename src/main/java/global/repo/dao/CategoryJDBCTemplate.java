@@ -1,15 +1,11 @@
 package global.repo.dao;
 
+import global.dto.response.CategoryPaginationResponse;
 import global.dto.response.CategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
-
-/**
- * Abdyrazakova Aizada
- */
 
 @Repository
 @RequiredArgsConstructor
@@ -17,17 +13,23 @@ public class CategoryJDBCTemplate {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public List<CategoryResponse> getAllCategory() {
+    public CategoryPaginationResponse getAllCategory(int currentPage,int pageSize) {
+        int offset = (currentPage - 1)*pageSize;
         String sql = """
                 SELECT id,
-                name FROM categories
+                name FROM categories 
+                LIMIT ? OFFSET ?
                 """;
-        return jdbcTemplate.query(sql, (resultSet, rowNumber) -> {
-            return new CategoryResponse(
+        List<CategoryResponse>categoryResponseList =  jdbcTemplate.query(sql, (resultSet, rowNumber) ->
+             new CategoryResponse(
                     resultSet.getLong("id"),
                     resultSet.getString("name")
-            );
-        });
+            )
+        ,currentPage,offset);
+    return CategoryPaginationResponse.builder()
+            .currentPage(currentPage)
+            .pageSize(pageSize)
+            .categoryResponseList(categoryResponseList).build();
     }
 
     public CategoryResponse getCategoryById(Long categoryId) {
@@ -38,20 +40,4 @@ public class CategoryJDBCTemplate {
                     rs.getString("name"));
         }, categoryId);
     }
-
-
-//    public CategoryResponse getCategoryById(Long categoryId) {
-//        String sql = "SELECT id, name FROM categories WHERE id = ?";
-//        CategoryResponse categoryResponse = jdbcTemplate.queryForObject(sql,
-//                (resultSet, rowNum) -> {
-//                    long id = resultSet.getLong("id");
-//                    String name = resultSet.getString("name");
-//                    return new CategoryResponse(id, name);
-//                },
-//                categoryId);
-//
-//        return categoryResponse;
-//    }
-
-
 }

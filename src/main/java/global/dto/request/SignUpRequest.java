@@ -1,21 +1,14 @@
 package global.dto.request;
 
 import global.entity.enums.Role;
-import global.validations.EmailValid;
 import global.validations.PasswordValid;
 import global.validations.PhoneNumberValid;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
-
 import java.time.LocalDate;
 
-/**
- * Abdyrazakova Aizada
- */
 public record SignUpRequest(
         @NotNull
         String firstName,
@@ -23,7 +16,6 @@ public record SignUpRequest(
         String lastName,
         LocalDate dateOfBirth,
         @Email(message = "Email is invalid")
-//        @EmailValid(message = "")
         String email,
         @PasswordValid
         String password,
@@ -33,5 +25,4 @@ public record SignUpRequest(
         Role role,
         LocalDate experience
 ) {
-
 }

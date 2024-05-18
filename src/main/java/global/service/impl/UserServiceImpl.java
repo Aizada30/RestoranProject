@@ -3,6 +3,7 @@ package global.service.impl;
 import global.dto.request.SignUpRequest;
 import global.dto.response.SimpleResponse;
 import global.dto.response.UserResponse;
+import global.dto.response.UserResponsePagination;
 import global.entity.Restaurant;
 import global.entity.User;
 import global.entity.enums.Role;
@@ -20,14 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -40,9 +36,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserResponse> getAll() {
+    public UserResponsePagination getAll(int currentPage,int pageSize) {
         log.info("User list successfully exit");
-        return userJDBCTemplate.getAllUsers();
+        return userJDBCTemplate.getAllUsers(currentPage,pageSize);
     }
 
     @Override
@@ -112,14 +108,13 @@ public class UserServiceImpl implements UserService {
         user.setEmail(signUpRequest.email());
         user.setPassword(passwordEncoder.encode(signUpRequest.password()));
         user.setPhoneNumber(signUpRequest.phoneNumber());
+        restaurant.setNumberOfEmployees(userRepo.numberOfEmployees(user.getId()));
         user.setRole(signUpRequest.role());
 
-        LocalDate dateOfBirth = signUpRequest.dateOfBirth();
-        LocalDate currentZoneDate = LocalDate.now();
 
-        int experience = Period.between(LocalDate.now(), signUpRequest.experience()).getYears();
+        int experience = Period.between( signUpRequest.experience(),LocalDate.now()).getYears();
+        int age = Period.between(signUpRequest.dateOfBirth(), LocalDate.now()).getYears();
 
-        int age = Period.between(dateOfBirth, currentZoneDate).getYears();
         if (signUpRequest.role() == Role.CHEF) {
             if (age < 25 || age > 45) {
                 throw new BadCredentialException("For CHEF candidate's age - %s doesn't match the company requirements!".formatted(age));
@@ -159,7 +154,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public SimpleResponse acceptOrRejectUser(Long userId, String word) {
+    public SimpleResponse acceptOrRejectUser(Long userId, String word, Long restaurantId) {
+
 
         User user = userRepo.findById(userId).orElseThrow(() -> {
             String message = "Not found user with id: " + userId;
@@ -171,7 +167,7 @@ public class UserServiceImpl implements UserService {
             throw new AlreadyException("This user is already works in a restaurant!");
         }
 
-        if (word.equalsIgnoreCase("Accept")) {
+        if (word.equalsIgnoreCase("Accept") || word.equalsIgnoreCase("a") ) {
             if (userRepo.numberOfEmployees(1L) > 15) {
                 throw new BadCredentialException("No vacancy! Try later!");
             }
@@ -195,7 +191,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 throw new BadRequest("Invalid role type!");
             }
-            Restaurant restaurant = restaurantRepo.findById(1L).orElseThrow(() -> {
+            Restaurant restaurant = restaurantRepo.findById(restaurantId).orElseThrow(() -> {
                 String message = "Not found restaurant with id: " + 1;
                 log.error(message);
                 return new NotFoundException(message);

@@ -3,10 +3,8 @@ package global.entity;
 import global.entity.enums.RestType;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
 import java.util.List;
-
 import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -28,9 +26,8 @@ public class Restaurant  {
     private RestType restType;
     private int numberOfEmployees;
     private BigDecimal service;
-    @OneToMany(mappedBy = "restaurant",cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @OneToMany(mappedBy = "restaurant",cascade = {ALL})
     private List<User> userList;
-    @OneToMany(mappedBy = "restaurant",cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @OneToMany(mappedBy = "restaurant",cascade = {DETACH,PERSIST,MERGE,REFRESH})
     private List<Menu>menultemList;
-
 }

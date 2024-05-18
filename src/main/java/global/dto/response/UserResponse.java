@@ -2,13 +2,8 @@ package global.dto.response;
 
 import global.entity.enums.Role;
 import lombok.Builder;
-import org.springframework.cglib.core.Local;
-
 import java.time.LocalDate;
 
-/**
- * Abdyrazakova Aizada
- */
 @Builder
 public record UserResponse(
         Long id,

@@ -1,6 +1,7 @@
 package global.service.impl;
 
 import global.dto.request.CategoryRequest;
+import global.dto.response.CategoryPaginationResponse;
 import global.dto.response.CategoryResponse;
 import global.dto.response.SimpleResponse;
 import global.entity.Category;
@@ -14,11 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-/**
- * Abdyrazakova Aizada
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -41,9 +37,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryResponse> getAllCategory() {
+    public CategoryPaginationResponse getAllCategory(int page, int pageSize) {
         log.info("All categories exit");
-        return categoryJDBCTemplate.getAllCategory();
+        return categoryJDBCTemplate.getAllCategory(page,pageSize);
     }
 
     @Override

@@ -1,50 +1,48 @@
 package global.repo.dao;
 
+import global.dto.response.MenuPaginationResponse;
 import global.dto.response.MenuResponse;
 import global.dto.response.SearchResponse;
 import global.dto.response.WholeMenu;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Repository
 @RequiredArgsConstructor
 public class MenuJDBCTemplate {
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final RowMapper<MenuResponse> menuResponseRowMapper = (resultSet, rowNumber) -> {
-        Long id = resultSet.getLong("id");
-        String name = resultSet.getString("name");
-        String image = resultSet.getString("image");
-        BigDecimal price = resultSet.getBigDecimal("price");
-        String description = resultSet.getString("description");
-        boolean isVegetarian = resultSet.getBoolean("is_vegetarian");
+        private final RowMapper<MenuResponse> menuResponseRowMapper = (resultSet, rowNumber) -> {
+            Long id = resultSet.getLong("id");
+            String name = resultSet.getString("name");
+            String image = resultSet.getString("image");
+            BigDecimal price = resultSet.getBigDecimal("price");
+            String description = resultSet.getString("description");
+            boolean isVegetarian = resultSet.getBoolean("is_vegetarian");
 
-        return new MenuResponse(id, name, image, price, description, isVegetarian);
-    };
+            return new MenuResponse(id, name, image, price, description, isVegetarian);
+        };
 
-    private final RowMapper<WholeMenu> wholeMenuRow = (resultSet, rowNumber) -> {
-        Long id = resultSet.getLong("id");
-        String categoryName = resultSet.getString("categoryName");
-        String subCategoryName = resultSet.getString("subCategoryName");
-        String menuName = resultSet.getString("menuName");
-        BigDecimal price = resultSet.getBigDecimal("price");
-
-
-        return new WholeMenu(id, categoryName, subCategoryName, menuName, price);
-    };
+        private final RowMapper<WholeMenu> wholeMenuRow = (resultSet, rowNumber) -> {
+            Long id = resultSet.getLong("id");
+            String categoryName = resultSet.getString("categoryName");
+            String subCategoryName = resultSet.getString("subCategoryName");
+            String menuName = resultSet.getString("menuName");
+            BigDecimal price = resultSet.getBigDecimal("price");
 
 
-    public List<MenuResponse> getAll() {
+            return new WholeMenu(id, categoryName, subCategoryName, menuName, price);
+        };
+
+
+
+    public MenuPaginationResponse getAll(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
         String sql = """
                 SELECT 
                 id,
@@ -53,38 +51,55 @@ public class MenuJDBCTemplate {
                 price,
                 description,
                 is_vegetarian
-                FROM menues
+                FROM menues 
+                LIMIT ? OFFSET ?
                 """;
-        return jdbcTemplate.query(sql, menuResponseRowMapper);
-    }
+        List<MenuResponse> menuResponseList = jdbcTemplate.query(sql, (resultSet, rowNumber) ->
+                        new MenuResponse(
+                                resultSet.getLong("id"),
+                                resultSet.getString("name"),
+                                resultSet.getString("image"),
+                                resultSet.getBigDecimal("price"),
+                                resultSet.getString("description"),
+                                resultSet.getBoolean("is_vegetarian")
+                        ),
+                pageSize, offset
+        );
+        return MenuPaginationResponse
+                .builder()
+                .currentPage(page)
+                .pageSize(pageSize)
+                .menuResponseList(menuResponseList)
+                .build();
+}
 
- public List<MenuResponse> filterByBoo(String word) {
-        if(word.equalsIgnoreCase("false")) {
+    public List<MenuResponse> filterByBoo(String word) {
+        if (word.equalsIgnoreCase("false")) {
             String sql = """
-                SELECT 
-                id,
-                name,
-                image,
-                price,
-                description,
-                is_vegetarian
-                FROM menues WHERE is_vegetarian IN (false) 
-                """;
-        return jdbcTemplate.query(sql, menuResponseRowMapper);
+                    SELECT 
+                    id,
+                    name,
+                    image,
+                    price,
+                    description,
+                    is_vegetarian
+                    FROM menues WHERE is_vegetarian IN (false) 
+                    """;
+            return jdbcTemplate.query(sql, menuResponseRowMapper);
         } else if (word.equalsIgnoreCase("true")) {
             String sql = """
-                SELECT 
-                id,
-                name,
-                image,
-                price,
-                description,
-                is_vegetarian
-                FROM menues WHERE is_vegetarian IN (true) 
-                """;
+                    SELECT 
+                    id,
+                    name,
+                    image,
+                    price,
+                    description,
+                    is_vegetarian
+                    FROM menues WHERE is_vegetarian IN (true) 
+                    """;
             return jdbcTemplate.query(sql, menuResponseRowMapper);
         }
-     return  null;
+        return null;
     }
 
 
@@ -114,7 +129,7 @@ public class MenuJDBCTemplate {
                     """;
             return jdbcTemplate.query(sql, menuResponseRowMapper);
         }
-        return  null;
+        return null;
     }
 
 
@@ -167,7 +182,7 @@ public class MenuJDBCTemplate {
         return jdbcTemplate.query(sql, menuSearch, "%" + word + "%", "%" + word + "%", "%" + word + "%");
     }
 
-    public List<WholeMenu>getAllMenuByChequeId(Long chequeId){
+    public List<WholeMenu> getAllMenuByChequeId(Long chequeId) {
         String sql = """
                 SELECT 
                 m.id,
@@ -175,14 +190,12 @@ public class MenuJDBCTemplate {
                 sc.name,
                 m.name,
                 m.price
-                FROM menues_cheque_list AS mc 
+                FROM cheques_menu_list AS mc 
                 JOIN menues AS m ON mc.menu_list_id = m.id
                 JOIN subcategories AS sc ON m.subcategory_id = sc.id
                 JOIN categories AS c ON sc.category_id = c.id
                 WHERE mc.cheque_list_id = ?
                 """;
-        return jdbcTemplate.query(sql,wholeMenuRow,chequeId);
-
+        return jdbcTemplate.query(sql, wholeMenuRow, chequeId);
     }
-
 }

@@ -15,14 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
-
 import static global.entity.enums.Role.ADMIN;
 
-/**
- * Abdyrazakova Aizada
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -51,7 +46,6 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         userRepository.save(user);
         log.info("User successfully saved");
-        // token generate method
         String token = jwtService.generateToken(user);
         log.info("Users token successfully generated");
         return AuthResponse.builder()

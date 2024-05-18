@@ -6,11 +6,8 @@ import java.util.List;
 
 @Builder
 @Getter
-public class StopListPagination {
-
-    private int page;
-
+public class UserResponsePagination {
+    int currentPage;
     private int pageSize;
-
-    private List<StopListResponse> stopListResponses;
+    private List<UserResponse> userResponseList;
 }

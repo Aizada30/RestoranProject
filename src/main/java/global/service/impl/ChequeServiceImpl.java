@@ -3,7 +3,7 @@ package global.service.impl;
 
 import global.dto.request.ChequeRequest;
 import global.dto.response.ChequeResponse;
-import global.dto.response.MenuResponse;
+import global.dto.response.ChequeResponsePagination;
 import global.dto.response.SimpleResponse;
 import global.entity.Cheque;
 import global.entity.Menu;
@@ -23,15 +23,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -42,11 +38,10 @@ public class ChequeServiceImpl implements ChequeService {
     private final ChequesJDBCTemplate chequesJDBCTemplate;
     private final UserRepo userRepo;
     private final MenuRepo menuRepo;
-    private final MenuJDBCTemplate menuJDBCTemplate;
 
     @Override
-    public List<ChequeResponse> findAll() {
-        return chequesJDBCTemplate.getAllCheques();
+    public ChequeResponsePagination findAll(int currentPage, int pageSize) {
+        return chequesJDBCTemplate.getAllCheques(currentPage, pageSize);
     }
 
     @Override
@@ -69,15 +64,15 @@ public class ChequeServiceImpl implements ChequeService {
         List<Menu> menuItems = new ArrayList<>();
         for (Long menuItemId : request.menuiesIdList()) {
             Menu menu = menuRepo.findById(menuItemId).orElseThrow(() -> new NotFoundException("Not found"));
-            if(menu.getStopList()!=null){
+            if (menu.getStopList() != null) {
                 throw new BadRequest("This product is already in stopList");
             }
             menuItems.add(menu);
         }
         cheque.setMenuList(menuItems);
         BigDecimal totalPrice = BigDecimal.ZERO;
-        for (Menu m:menuItems){
-        totalPrice = totalPrice.add(m.getPrice());
+        for (Menu m : menuItems) {
+            totalPrice = totalPrice.add(m.getPrice());
         }
         cheque.setPriceAvg(totalPrice);
         chequeRepo.save(cheque);
@@ -90,27 +85,52 @@ public class ChequeServiceImpl implements ChequeService {
 
     @Override
     public ChequeResponse findById(Long id) {
-        return null;
+        return chequesJDBCTemplate.getById(id);
     }
 
     @Override
-    public SimpleResponse update(Long id, ChequeRequest request) {
-        return null;
+    public SimpleResponse update(Long chequeId, ChequeRequest request) {
+        Cheque cheque = chequeRepo.findById(chequeId).orElseThrow(
+                () -> {
+                    log.error(String.format("Cheque with id: %s not found", chequeId));
+                    return new NotFoundException(String.format("Cheque with id: %s not found", chequeId));
+                }
+        );
+        List<Menu> menuList = new ArrayList<>();
+        for (Long menuId : request.menuiesIdList()) {
+            Menu menu = menuRepo.findById(menuId).orElseThrow(() -> new NotFoundException("Not found"));
+            if (menu.getStopList() != null) {
+                throw new BadRequest("This product is already in stopList");
+            }
+            menuList.add(menu);
+        }
+        cheque.setMenuList(menuList);
+        chequeRepo.save(cheque);
+        return new SimpleResponse(
+                HttpStatus.OK,
+                String.format("Cheque with id: %s successfully updated", chequeId)
+        );
     }
 
     @Override
     public SimpleResponse delete(Long id) {
-        return null;
+        chequeRepo.deleteChequeById(id).orElseThrow(() -> {
+            log.error(String.format("Cheque with id: %s not found", id));
+            return new NotFoundException(String.format("Cheque with id: %s not found", id));
+        });
+        return new SimpleResponse(
+                HttpStatus.OK,
+                String.format("Cheque with id: %s is successfully deleted",id)
+        );
     }
 
     @Override
-    public SimpleResponse totalSum(Long id, LocalDate date) {
-        return null;
+    public BigDecimal waitersPrice(Long userId) {
+        return chequeRepo.getTopByCreatedAt(userId);
     }
 
     @Override
-    public SimpleResponse avg(LocalDate date) {
-        return null;
+    public BigDecimal dayPrice(Long restaurantId) {
+        return chequeRepo.avg(restaurantId);
     }
 }
-

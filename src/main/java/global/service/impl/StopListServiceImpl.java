@@ -18,12 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -55,73 +51,7 @@ public class StopListServiceImpl implements StopListService {
                 String.format("StopList with id: %s successfully saved", stopList.getId())
         );
 
-//        List<StopList> stopLists = stopListRepo.findByMenuId(menuId);
-//        Menu menuItem = menuRepo.findById(menuId).orElseThrow(() -> new NotFoundException(""));
-//
-//        boolean isTrue = false;
-//        for (StopList s : stopLists) {
-//            if (!s.getDate().equals(stopListRequest.date())) {
-//                isTrue = true;
-//            } else {
-//                isTrue = false;
-//            }
-//        }
-//        if (isTrue){
-//            StopList stopList = StopList
-//                    .builder()
-//                    .menu(menuItem)
-//                    .date(stopListRequest.date())
-//                    .reason(stopListRequest.reason())
-//                    .build();
-//            stopListRepo.save(stopList);
-//        }
-//        return SimpleResponse
-//                .builder()
-//                .message("Stop list save")
-//                .httpStatus(HttpStatus.OK)
-//                .build();
-//
 
-//        List<StopListResponse> allResponse = stopListJDBCTemplate.getAll();
-//        StopList stopList = new StopList();
-//
-//        Menu menu = menuRepo.findById(menuId).orElseThrow(
-//                () -> {
-//                    log.error(String.format("Menu with id: %s not found ", menuId));
-//                    return new NotFoundException(String.format("Menu with id: %s not found ", menuId));
-//                }
-//        );
-//        log.info("МЫ ПРОШЛИ ПРОВЕРКУ МЕНЮ ");
-//
-//        log.info("МЫ ТАМ ГДЕ НАЧИНАЕТЬСЯ ПЕРВАЯ ПРОВЕРКА");
-//        for (StopListResponse list : allResponse) {
-//           if(stopListRepo.existsByMenu_Id(menuId)){
-//               if (!stopListRepo.existsStopListByDate(list.date())){
-//
-//               }
-//           }
-//        }
-//
-//        stopList.setDate(stopListRequest.date());
-//        stopList.setReason(stopListRequest.reason());
-//        stopList.setMenu(menu);
-//        menu.setStopList(stopList);
-//        log.info("МЫ ДОБАВИЛИ В МЕНЯ СТОПЛИСТ");
-//        if (allResponse.isEmpty()) {
-//            stopListRepo.save(stopList);
-////       stopListRepo.save(stopList);
-//            log.info(String.format("StopList with id: %s successfully saved", stopList.getId()));
-//            return new SimpleResponse(
-//                    HttpStatus.OK,
-//                    String.format("StopList with id: %s successfully saved", stopList.getId())
-//            );
-//        }
-//
-//        log.info("---КОНЕЦ---");
-//        return new SimpleResponse(
-//                HttpStatus.OK,
-//                String.format("StopList with id: %s successfully saved", stopList.getId())
-//        );
     }
 
     @Override
@@ -177,6 +107,6 @@ public class StopListServiceImpl implements StopListService {
 
     @Override
     public StopListPagination getAll(int page, int pageSize) {
-        return stopListJDBCTemplate.getAll(page,pageSize);
+        return stopListJDBCTemplate.getAll(page, pageSize);
     }
 }

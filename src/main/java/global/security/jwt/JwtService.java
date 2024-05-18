@@ -7,13 +7,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import java.time.ZonedDateTime;
 import java.util.Date;
 
-/**
- * Abdyrazakova Aizada
- */
 @Component
 public class JwtService {
     @Value("${spring.jwt.secret_key}")
@@ -27,7 +23,7 @@ public class JwtService {
                 .sign(Algorithm.HMAC256(SECRET_KEY));
     }
 
-    public String validateToken(String token){//admin@gmail.com
+    public String validateToken(String token){
         JWTVerifier jwtVerifier=
                 JWT.require(Algorithm.HMAC256(SECRET_KEY))
                         .build();

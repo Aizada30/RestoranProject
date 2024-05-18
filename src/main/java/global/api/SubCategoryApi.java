@@ -1,8 +1,8 @@
 package global.api;
 
 import global.dto.request.SubCategoryRequest;
-import global.dto.response.CategoryGroupByResponse;
 import global.dto.response.SimpleResponse;
+import global.dto.response.SubCategoryPagination;
 import global.dto.response.SubCategoryResponse;
 import global.service.SubCategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,12 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/subCategory")
@@ -56,9 +52,7 @@ public class SubCategoryApi {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAll")
-    public List<CategoryGroupByResponse> getAllSubCategories(){
-        return subCategoryService.getAllSubCategories();
+    public SubCategoryPagination getAllSubCategories(int currentPage, int pageSize){
+        return subCategoryService.getAllSubCategories(currentPage,pageSize);
     }
-
-
 }

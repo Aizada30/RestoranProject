@@ -2,17 +2,11 @@ package global.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
 import java.util.List;
-
 import static jakarta.persistence.CascadeType.*;
-import static jakarta.persistence.CascadeType.MERGE;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-/**
- * Abdyrazakova Aizada
- */
 @Getter
 @Setter
 @Entity
@@ -30,14 +24,12 @@ public class Menu  {
     private BigDecimal price;
     private String description;
     private boolean isVegetarian;
-    @ManyToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToOne(cascade = {REFRESH,MERGE,DETACH,PERSIST})
     private Restaurant restaurant;
-    @ManyToOne(cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToOne(cascade = {ALL})
     private Subcategory subcategory;
-    @OneToOne (mappedBy = "menu",cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @OneToOne (mappedBy = "menu",cascade = {ALL})
     private StopList stopList;
-    @ManyToMany(mappedBy = "menuList",cascade = {REFRESH,DETACH,PERSIST,MERGE})
+    @ManyToMany(mappedBy = "menuList", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, REMOVE})
     private List<Cheque> chequeList;
-
-
 }

@@ -1,6 +1,7 @@
 package global.service.impl;
 
 import global.dto.request.MenuRequest;
+import global.dto.response.MenuPaginationResponse;
 import global.dto.response.MenuResponse;
 import global.dto.response.SearchResponse;
 import global.dto.response.SimpleResponse;
@@ -18,12 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
-/**
- * Abdyrazakova Aizada
- */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -60,16 +57,16 @@ public class MenuServiceImpl implements MenuService {
         subcategory.getMenuList().add(menu);
         restaurant.getMenultemList().add(menu);
         menuRepo.save(menu);
-        log.info(String.format("Restaurant with id:%s successfully saved", restaurantId));
+        log.info(String.format("Menu with id:%s successfully saved", menu.getId()));
         return new SimpleResponse(
                 HttpStatus.OK,
-                String.format("Restaurant with id:%s successfully saved", restaurantId)
+                String.format("Menu with id:%s successfully saved", menu.getId())
         );
     }
 
     @Override
-    public List<MenuResponse> getAll() {
-      return menuJDBCTemplate.getAll();
+    public MenuPaginationResponse getAll(int page, int pageSize) {
+      return menuJDBCTemplate.getAll(page,pageSize);
     }
 
     @Override

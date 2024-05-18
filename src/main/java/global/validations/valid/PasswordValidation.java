@@ -4,9 +4,6 @@ import global.validations.PasswordValid;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-/**
- * Abdyrazakova Aizada
- */
 public class PasswordValidation implements ConstraintValidator<PasswordValid,String > {
 
     @Override
